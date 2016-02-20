@@ -1,7 +1,8 @@
 import json
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 engine = create_engine('sqlite:///Neighborhood.db', echo=False) #Move string to constants 
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
@@ -30,6 +31,7 @@ class User(Base):
     phone = Column(String(10), nullable=True)
     email = Column(String(75), nullable=False)
     password = Column(String(75), nullable=False)
+    cards = relationship("Card") 
 
 
     def __repr__(self):
@@ -39,6 +41,22 @@ class User(Base):
 user_table = User.__table__
 
 metadata = Base.metadata
+
+class Card(Base):
+    __tablename__ = 'card'
+    id = Column(Integer, primary_key=True)
+    author = Column(Integer,ForeignKey('user.id'))
+    upvotes = Column(Integer, nullable=False)
+    downvotes = Column(Integer, nullable=False)
+    totalvotes = Column(Integer, nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    reported = Column(Boolean, nullable=False)
+    date = Column(DateTime, nullable = False)
+
+
+    def __repr__(self):
+        return "<Card('%s')>" % (self.id)
 
 
 def create_all():

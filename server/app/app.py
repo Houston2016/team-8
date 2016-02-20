@@ -2,6 +2,7 @@ import tornado.web
 import requests
 import json
 import time
+import uuid
 import tornado.escape
 from sqlalchemy.orm import scoped_session, sessionmaker
 from models import *  # import the engine to bind
@@ -16,10 +17,11 @@ class Application(tornado.web.Application):
         (r"^/", MainHandler),
         (r"^/login", LoginHandler),
         (r'^/api/v1/users/([0-9]?)$', UserHandler),
-        (r'^/api/v1/admin/([0-9]?)$', AdminHandler),
+        (r'^/api/v1/admins/([0-9]?)$', AdminHandler),
+        (r'^/api/v1/cards/([0-9]?)$', CardHandler),
         ]
         settings = {
-            "cookie_secret":"super secret!",
+            "cookie_secret": str(uuid.uuid1()),
             "login_url":"/login"
         }
         tornado.web.Application.__init__(self, handlers, **settings)
@@ -31,7 +33,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         user_id = self.get_secure_cookie("user")
         if not user_id: return None
-        return self.db.query(User).get(user_id)
+        return self.db.query(User).get(int(user_id))
 
 class UserHandler(BaseHandler):
     @property
@@ -84,7 +86,7 @@ class UserHandler(BaseHandler):
             user = User(**data)
             self.db.add(user)
             self.db.commit()
-
+            self.write(json.dumps({"status":200}))
 
         else:
             print("Error")
@@ -95,7 +97,7 @@ class UserHandler(BaseHandler):
     def delete(self, _id):
         print("Deleted " , _id)
         self.db.query(User).filter_by(id=int(_id)).delete()
-
+        self.write(json.dumps({"status":200}))
 
 class AdminHandler(BaseHandler):
     @property
@@ -106,6 +108,7 @@ class AdminHandler(BaseHandler):
         if not _id:
             admin = self.db.query(Admin).all()
             self.write(json.dumps({"admins":admin}, cls=AlchemyEncoder))
+
         else:
             admin = self.db.query(Admin).get(int(_id))
             self.write(json.dumps({"admin":admin}, cls=AlchemyEncoder))
@@ -118,9 +121,10 @@ class AdminHandler(BaseHandler):
             data = {}
             for keys in self.request.arguments:
                 data[keys] = self.request.arguments[keys][0].decode("utf-8")    
-            user = User(**data)
+            admin = Admin(**data)
             self.db.add(user)
             self.db.commit()
+            self.write(json.dumps({"status":200}))
         else:
             print("Error")
             print(self.request.arguments)
@@ -138,6 +142,7 @@ class AdminHandler(BaseHandler):
             admin = Admin(**data)
             self.db.add(Admin)
             self.db.commit()
+            self.write(json.dumps({"status":200}))
         else:
             print("Error")
             print(self.request.arguments)
@@ -148,6 +153,61 @@ class AdminHandler(BaseHandler):
         print("Deleted " , _id)
         self.db.query(Admin).filter_by(id=int(_id)).delete()
         
+
+
+class CardHandler(BaseHandler):
+    @property
+    def db(self):
+        return self.application.db
+
+    def get(self, _id):
+        if not _id:
+            cards = self.db.query(Card).all()
+            self.write(json.dumps({"cards":cards}, cls=AlchemyEncoder))
+        else:
+            card = self.db.query(Card).get(int(_id))
+            self.write(json.dumps({"card":card}, cls=AlchemyEncoder))
+
+
+    def post(self, _id):
+        card = Card()
+        form = CardForm(SimpleMultiDict(self.request.arguments), card)
+        if form.validate():
+            data = {}
+            for keys in self.request.arguments:
+                data[keys] = self.request.arguments[keys][0].decode("utf-8")    
+            card = Card(**data)
+            self.db.add(card)
+            self.db.commit()
+            self.write(json.dumps({"status":200}))
+
+        else:
+            print("Error")
+            print(self.request.arguments)
+    
+    def put(self, _id):
+        card = Card()
+        form = CardForm(SimpleMultiDict(self.request.arguments), card)
+        if form.validate():
+            data = {}
+            for keys in self.request.arguments:
+                data[keys] = self.request.arguments[keys][0].decode("utf-8") 
+            print(data)    
+            self.db.query(Card).filter_by(id=int(_id)).delete()
+            card = self.db.query(Card).filter_by(id=int(_id))
+            card = Card(**data)
+            self.db.add(Card)
+            self.db.commit()
+        else:
+            print("Error")
+            print(self.request.arguments)
+
+
+
+    def delete(self, _id):
+        print("Deleted " , _id)
+        self.db.query(Admin).filter_by(id=int(_id)).delete()
+
 
 
 class LoginHandler(BaseHandler):
@@ -175,17 +235,14 @@ class LoginHandler(BaseHandler):
                     self.write(json.dumps({"Error":400, 'message':"user password is not correct"}))
                     break
                 else:
-                    self.set_secure_cookie("user", str(time.time()))
+
+                    self.set_secure_cookie("user", str(user.id))
                     print("YES")
                     self.write(json.dumps({"status":200}))
                 #self.redirect("/")
         if user is None:
             print("No user")
             self.redirect('/signup')
-
-
-
-
 
 
 
