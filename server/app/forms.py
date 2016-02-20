@@ -17,8 +17,8 @@ class CardForm(Form):
     totalvotes = IntegerField(u'upvotes',validators=[validators.input_required()])
     title = StringField(u'title', validators=[validators.input_required()])
     description = StringField(u'description', validators=[validators.input_required()])
-    reported = BooleanField(u'reported', validators=[validators.input_required()])
-    date = DateField(u'date',  validators=[validators.input_required()])
+
+
 
 
 
