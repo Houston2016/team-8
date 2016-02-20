@@ -11,6 +11,14 @@ class UserForm(Form):
     phone = StringField(u'phone', validators=[validators.input_required()])
     email = StringField(u'email', validators=[validators.input_required()])
 
+class CardForm(Form):
+    upvotes = IntegerField(u'upvotes',validators=[validators.input_required()])
+    downvotes =  IntegerField(u'upvotes',validators=[validators.input_required()])
+    totalvotes = IntegerField(u'upvotes',validators=[validators.input_required()])
+    title = StringField(u'title', validators=[validators.input_required()])
+    description = StringField(u'description', validators=[validators.input_required()])
+    reported = BooleanField(u'reported', validators=[validators.input_required()])
+    date = DateField(u'date',  validators=[validators.input_required()])
 
 
 
