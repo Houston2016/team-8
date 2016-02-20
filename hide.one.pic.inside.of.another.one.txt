@@ -1,0 +1,59 @@
+// write your code here
+var fImage = new SimpleImage("palm-and-beach.png");
+var bImage = new SimpleImage("dinos.png");
+function crop(image, width, height){
+    var mImage = new SimpleImage(width,height);
+    for(var p of mImage.values()){
+        var x = p.getX();
+        var y = p.getY();
+        p.setRed(image.getRed(x,y));
+        p.setGreen(image.getGreen(x,y));
+        p.setBlue(image.getBlue(x,y));
+    }
+    return mImage;
+}
+function pixChange(pixVal){
+    var x = Math.floor(pixVal/16)*16;
+    return x;
+}
+function chop2hide(image){
+    for(var px of image.values()){
+        px.setRed(pixChange(px.getRed()));
+        px.setGreen(pixChange(px.getGreen()));
+        px.setBlue(pixChange(px.getBlue()));
+    }
+    return image;
+}
+function shift(image){
+    var nimage = new SimpleImage(image.getWidth(),image.getHeight());
+    for(var px of image.values()){
+        var x = px.getX();
+        var y = px.getY();
+        var npx = nimage.getPixel(x,y);
+        npx.setRed(Math.floor(px.getRed()/16));
+        npx.setGreen(Math.floor(px.getGreen()/16));
+        npx.setBlue(Math.floor(px.getBlue()/16));
+    }
+    return nimage;
+}
+function newpv(p,q){
+    if(p+q>255){
+        print("error");
+        return 255;
+    }
+    return p+q;
+}
+function combine(start,end){
+    var com = new SimpleImage(start.getWidth(),start.getHeight());
+    for(var p of com.values()){
+        var x = p.getX();
+        var y = p.getY();
+        p.setRed(start.getRed(x,y)+end.getRed(x,y));
+        p.setGreen(start.getGreen(x,y)+end.getGreen(x,y));
+        p.setBlue(start.getBlue(x,y)+end.getBlue(x,y));
+    }
+    return com;
+}
+var start = chop2hide(crop(fImage,fImage.getWidth(),fImage.getHeight()));
+var end = shift(bImage);
+print(combine(start,end));

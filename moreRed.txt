@@ -1,0 +1,17 @@
+// write your code here
+function moreRed(pixel,value){
+    if (pixel.getRed()<(255-value)){
+        pixel.setRed(pixel.getRed());
+    }
+    else{
+        pixel.setRed(pixel.getRed()+value);
+    }
+        
+
+}
+var image = new SimpleImage("eastereggs.jpg");
+var value = 20;
+for (var p of image.values()){
+    moreRed(p,value);
+}
+print(image);
