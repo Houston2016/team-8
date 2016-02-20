@@ -1,0 +1,27 @@
+//html
+ <div class="hero__media">
+                <video autoplay loop tabindex="0" poster="//d2oi0d3f1mzz6w.cloudfront.net/assets/background-home-680a58417f9d78cabec618128a6b4f87.jpg">
+                    <source src="//dfdsc3489ng20.cloudfront.net/video/homepage/hero/NC-HomepageVideo.mp4" type="video/mp4"/>
+                    <source src="//dfdsc3489ng20.cloudfront.net/video/homepage/hero/NC-HomepageVideo.webm" type="video/webm"/>
+                    <source src="//dfdsc3489ng20.cloudfront.net/video/homepage/hero/NC-HomepageVideo.ogv" type="video/ogg"/>
+                </video>
+</div>
+
+//css
+video { 
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    transform: translateX(-50%) translateY(-50%);
+    no-repeat;
+    background-size: cover;
+    transition: 1s opacity;
+}
+.stopfade { 
+   opacity: .5;
+}
