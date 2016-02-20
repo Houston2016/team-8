@@ -1,0 +1,10 @@
+// write your code here
+function swapRedGreen(pixel){
+    pixel.setRed(pixel.getGreen());
+    pixel.setGreen(pixel.getRed());
+}
+var image = new SimpleImage("eastereggs.jpg");
+for (var p of image.values()){
+    swapRedGreen(p);
+}
+print(image);
