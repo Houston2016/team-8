@@ -61,10 +61,11 @@ class UserHandler(BaseHandler):
             data = {}
             for keys in self.request.arguments:
                 data[keys] = self.request.arguments[keys][0].decode("utf-8") 
-            print(data)    
+            print(data)  
             user = User(**data)
             self.db.add(user)
             self.db.commit()
+            self.write(json.dumps({"status":200}))
         else:
             print("Error")
             print(self.request.arguments) 
@@ -150,6 +151,9 @@ class AdminHandler(BaseHandler):
 
 
 class LoginHandler(BaseHandler):
+    @property
+    def db(self):
+        return self.application.db
     def post(self):
         #expects username and password 
 
@@ -157,23 +161,40 @@ class LoginHandler(BaseHandler):
         for keys in self.request.arguments:
             data[keys] = self.request.arguments[keys][0].decode("utf-8")   
 
-        if not data.get("username") and data.get("password"): 
-            self.write(json.dumps({"Error":400}))
-            
+        if  data.get("username") is None or data.get("password") is None: 
+            print("Empty fields")
+            self.write(json.dumps({"Error":400, "message":"fields can't be empty"}))
 
-        user = self.db.query(User).filter(User.username == data.get('username'))
-        if user.password != data.get("password"):
-            self.write(json.dumps({"Error":400}))
-            self.redirect("/signup")
 
-        self.set_secure_cookie("user", str(time.time()))
-        self.redirect("/")
+        users = self.db.query(User).all()
+
+        for user in users:
+            if user.username.strip() == data.get('username').strip():
+                if user.password != data.get("password"):
+                    print("password not correct")
+                    self.write(json.dumps({"Error":400, 'message':"user password is not correct"}))
+                    break
+                else:
+                    self.set_secure_cookie("user", str(time.time()))
+                    print("YES")
+                    self.write(json.dumps({"status":200}))
+                #self.redirect("/")
+        if user is None:
+            print("No user")
+            self.redirect('/signup')
+
+
+
 
 
 
 
 
 class MainHandler(BaseHandler):
+    @property
+    def db(self):
+        return self.application.db
+
     @tornado.web.authenticated
     def get(self):
         self.render('templates/index.html')

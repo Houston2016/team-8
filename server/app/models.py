@@ -33,10 +33,10 @@ class User(Base):
 
 
     def __repr__(self):
-        return "<User('%s')>" % (self.name)
+        return "<User('%s')>" % (self.username)
 
         
-users_table = User.__table__
+user_table = User.__table__
 
 metadata = Base.metadata
 
