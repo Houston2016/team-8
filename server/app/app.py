@@ -171,8 +171,8 @@ class CardHandler(BaseHandler):
 
     def post(self, _id):
         card = Card()
-        form = CardForm(SimpleMultiDict(self.request.arguments), card)
-        if form.validate():
+        #form = CardForm(SimpleMultiDict(self.request.arguments), card)
+        if True:
             data = {}
             for keys in self.request.arguments:
                 data[keys] = self.request.arguments[keys][0].decode("utf-8")    
