@@ -1,0 +1,29 @@
+// write your code here
+function setBlack(pixel){
+    pixel.setRed(0);
+    pixel.setGreen(0);
+    pixel.setBlue(0);
+}
+
+function pixelOnEdge(pixel,image,borderWidth){
+    var x = pixel.getX();
+    var y = pixel.getY();
+    if(x<borderWidth){
+        setBlack(pixel);
+    }
+    if(y<borderWidth){
+        setBlack(pixel);
+    }
+    if(x>image.getWidth()-borderWidth){
+        setBlack(pixel);
+    }
+    if(y>image.getHeight()-borderWidth){
+        setBlack(pixel);
+    }
+}
+var image = new SimpleImage("eastereggs.jpg");
+var borderWidth = 10;
+for (var p of image.values()){
+    pixelOnEdge(p,image,borderWidth);
+}
+print(image);
