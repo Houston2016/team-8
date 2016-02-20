@@ -26,11 +26,11 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(30), nullable=False)
     name = Column(String(50), nullable=False)
-    address = Column(String(150), nullable=False)
-    phone = Column(String(10), nullable=False)
+    address = Column(String(150), nullable=True)
+    phone = Column(String(10), nullable=True)
     email = Column(String(75), nullable=False)
-    image = Column(String(2083), nullable=False) #image url
-    rating = Column(Integer, nullable =False)
+    password = Column(String(75), nullable=False)
+
 
     def __repr__(self):
         return "<User('%s')>" % (self.name)

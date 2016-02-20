@@ -14,12 +14,14 @@ class Application(tornado.web.Application):
         create_all()
         handlers = [
         (r"^/", MainHandler),
+        (r"^/login", LoginHandler),
         (r'^/api/v1/users/([0-9]?)$', UserHandler),
         (r'^/api/v1/admin/([0-9]?)$', AdminHandler),
         ]
-        settings = dict(
-            cookie_secret="super secret!"
-        )
+        settings = {
+            "cookie_secret":"super secret!",
+            "login_url":"/login"
+        }
         tornado.web.Application.__init__(self, handlers, **settings)
         # Have one global connection.
         self.db = scoped_session(sessionmaker(bind=engine))
@@ -35,7 +37,6 @@ class UserHandler(BaseHandler):
     @property
     def db(self):
         return self.application.db
-
 
     def get_current_user(self):
         user_id = self.get_secure_cookie("user")
@@ -112,12 +113,10 @@ class AdminHandler(BaseHandler):
     def post(self, _id):
         admin = Admin()
         form = AdminForm(SimpleMultiDict(self.request.arguments), admin)
-        print("Post to /user")
         if form.validate():
             data = {}
             for keys in self.request.arguments:
-                data[keys] = self.request.arguments[keys][0].decode("utf-8") 
-            print(data)    
+                data[keys] = self.request.arguments[keys][0].decode("utf-8")    
             user = User(**data)
             self.db.add(user)
             self.db.commit()
@@ -134,7 +133,7 @@ class AdminHandler(BaseHandler):
                 data[keys] = self.request.arguments[keys][0].decode("utf-8") 
             print(data)    
             self.db.query(Admin).filter_by(id=int(_id)).delete()
-            user = self.db.query(Admin).filter_by(id=int(_id))
+            admin = self.db.query(Admin).filter_by(id=int(_id))
             admin = Admin(**data)
             self.db.add(Admin)
             self.db.commit()
@@ -149,7 +148,33 @@ class AdminHandler(BaseHandler):
         self.db.query(Admin).filter_by(id=int(_id)).delete()
         
 
-class MainHandler(tornado.web.RequestHandler):
+
+class LoginHandler(BaseHandler):
+    def post(self):
+        #expects username and password 
+
+        data = {}
+        for keys in self.request.arguments:
+            data[keys] = self.request.arguments[keys][0].decode("utf-8")   
+
+        if not data.get("username") and data.get("password"): 
+            self.write(json.dumps({"Error":400}))
+            
+
+        user = self.db.query(User).filter(User.username == data.get('username'))
+        if user.password != data.get("password"):
+            self.write(json.dumps({"Error":400}))
+            self.redirect("/signup")
+
+        self.set_secure_cookie("user", str(time.time()))
+        self.redirect("/")
+
+
+
+
+
+class MainHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self):
         self.render('templates/index.html')
 
