@@ -1,2 +1,3 @@
 goodenv/*
 *.pyc
+*.db
