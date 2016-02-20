@@ -1,0 +1,13 @@
+html { 
+  background: url("http://d2oi0d3f1mzz6w.cloudfront.net/assets/nci-logo-225d8cef143524d64d6ee25fe848a763.png" ) no-repeat center center fixed;   
+  background-size: 1850px 500px;
+}
+
+li {
+  
+  text-align: center;
+  margin: 2em 0 0;
+  color: #17100E;
+  font-family:New Time Roman;
+  list-style:none;
+}
