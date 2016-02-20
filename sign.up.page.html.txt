@@ -1,0 +1,24 @@
+<div class="hero__media">
+                <video autoplay loop tabindex="0" poster="//d2oi0d3f1mzz6w.cloudfront.net/assets/background-home-680a58417f9d78cabec618128a6b4f87.jpg">
+                    <source src="//dfdsc3489ng20.cloudfront.net/video/homepage/hero/NC-HomepageVideo.mp4" type="video/mp4"/>
+                    <source src="//dfdsc3489ng20.cloudfront.net/video/homepage/hero/NC-HomepageVideo.webm" type="video/webm"/>
+                    <source src="//dfdsc3489ng20.cloudfront.net/video/homepage/hero/NC-HomepageVideo.ogv" type="video/ogg"/>
+                </video>
+       </div>
+
+<form class= "c1" name="my_form">
+First Name
+  <input class= "c2" type="text" name="first_name" size="30"/><br />
+  
+Last Name
+<input class= "c2" type="text" class= "c3" name="last_name" size="30"/><br />
+Email        
+<input class= "c2" type="text" name="email" size="30" /><br />
+password
+<input class= "c2" type="password" name="user_password" size="30" /><br />
+Confirm password
+<input class= "c2" type="password" name="confirm_password" size="30" /><br />
+  
+<input class="c2" type="button" value="submit" onclick="button_actions()" />
+  
+</form>
